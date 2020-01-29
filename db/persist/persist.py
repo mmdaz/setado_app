@@ -14,10 +14,10 @@ def add_costumer(first_name, last_name, age):
         session.rollback()
         print("we have error in add_costumer, {}".format(e))
 
-def add_address_to_costumer_in_db(costumer, name, address, phone):
+def add_address_to_costumer_in_db(costumer, addresses_list:list):
     try:
-        new_address = Address(name=name, address=address, phone=phone)
-        costumer.addresses.append(new_address)
+        for address in addresses_list:
+            costumer.addresses.append(address)
         session.commit()
     except SQLAlchemyError as e:
         session.rollback()

@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 
 from controller.register import costumer_register, add_address_to_costumer
+from db.models.address import Address
 
 
 class MainWindow:
@@ -11,6 +12,7 @@ class MainWindow:
         self.main_window = Tk()
         self.user_register_window = None
         self.address_window = None
+        self.addresses_list = []
 
     def run(self):
         self.main_window.title("Welcome to Sitado app")
@@ -54,7 +56,8 @@ class MainWindow:
         name.grid(column=1, row=0)
         address.grid(column=2, row=0)
         phone.grid(column=3, row=0)
-        add_another_address_button = Button(self.address_window, text="Save this and add new one")
+        add_another_address_button = Button(self.address_window, text="Save this and add new one",
+                                            command=partial(self.add_address, name, address, phone))
         save_and_exit = Button(self.address_window, text="save and exit", command=partial(self.save_address,
                                                                                           name, address, phone,
                                                                                           costumer))
@@ -66,9 +69,15 @@ class MainWindow:
         name = name.get()
         address = address.get()
         phone = phone.get()
-        add_address_to_costumer(costumer=costumer, name=name, address=address, phone=phone)
+        self.addresses_list.append(Address(name=name, address=address, phone=phone))
+        add_address_to_costumer(costumer=costumer, addresses_list=self.addresses_list)
         messagebox.showinfo('Success!', 'Costumer Added.')
+        self.addresses_list.clear()
         self.user_register_window.destroy()
         self.address_window.destroy()
 
-
+    def add_address(self, name, address, phone):
+        self.addresses_list.append(Address(name=name.get(), address=address.get(), phone=phone.get()))
+        name.delete(0, 'end')
+        address.delete(0, 'end')
+        phone.delete(0, 'end')
