@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 
 from controller.food import add_new_food
-from controller.register import costumer_register, add_address_to_costumer
+from controller.register import costumer_register, add_address_to_costumer, calculate_report
 from db.models.address import Address
 from db.persist.persist import get_all_foods, create_bill, create_buy_bill
 from view.checkbar import CheckBar
@@ -29,9 +29,11 @@ class MainWindow:
         consumer_register_button = Button(self.main_window, text="Costumer Register", command=self.user_register)
         add_food_to_menu = Button(self.main_window, text="Add Food To Menu", command=self.add_food_to_menu)
         buy_menu = Button(self.main_window, text="Buy Menu", command=self.buy)
+        report = Button(self.main_window, text="Report", command=self.show_report)
         consumer_register_button.grid(column=1, row=0)
         add_food_to_menu.grid(column=1, row=2)
         buy_menu.grid(column=1, row=4)
+        report.grid(column=1, row=5)
         self.main_window.mainloop()
 
     def user_register(self):
@@ -84,7 +86,7 @@ class MainWindow:
         phone = phone.get()
         self.addresses_list.append(Address(name=name, address=address, phone=phone))
         add_address_to_costumer(costumer=costumer, addresses_list=self.addresses_list)
-        messagebox.showinfo('Success!', 'Costumer Added.')
+        messagebox.showinfo('Success!', 'Costumer Added Your ID : {}'.format(costumer.id))
         self.addresses_list.clear()
         self.user_register_window.destroy()
         self.address_window.destroy()
@@ -158,3 +160,7 @@ class MainWindow:
         name = name.get()
         price = price.get()
         create_buy_bill(name=name, price=price, store_id=store_id)
+
+    def show_report(self):
+        sells, buy = calculate_report()
+        messagebox.showinfo("Report", "Sells: {}\nBuy: {}\nfinally : {}".format(sells, -buy, sells + buy))

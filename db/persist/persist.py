@@ -49,8 +49,8 @@ def get_all_foods():
 
 def create_bill(selected_foods, costumer_id):
     try:
-        selected_foods_name = "-".join([food.name for food in selected_foods])
-        selected_foods_prices = "-".join([str(food.price) for food in selected_foods])
+        selected_foods_name = "@".join([food.name for food in selected_foods])
+        selected_foods_prices = "@".join([str(food.price) for food in selected_foods])
         bill = Bill(food_name=selected_foods_name, food_price=selected_foods_prices, created_at=datetime.now(),
                     costumer_id=costumer_id)
         session.add(bill)
@@ -67,3 +67,10 @@ def create_buy_bill(name, price, store_id):
     except SQLAlchemyError as e:
         session.rollback()
         print("we have error in create_buy_bill, {}".format(e))
+
+def get_all_bills():
+    try:
+        return session.query(Bill).all()
+    except SQLAlchemyError as e:
+        session.rollback()
+        print("we have error in get_all_bills, {}".format(e))
