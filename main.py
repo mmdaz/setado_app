@@ -9,4 +9,5 @@ from view.main_window import MainWindow
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     view = MainWindow()
-    view.run()
+    # view.show_menu() # for reserve
+    view.run() # for add and update

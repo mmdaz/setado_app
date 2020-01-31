@@ -5,24 +5,33 @@ from tkinter import messagebox
 from controller.food import add_new_food
 from controller.register import costumer_register, add_address_to_costumer
 from db.models.address import Address
+from db.persist.persist import get_all_foods, create_bill, create_buy_bill
+from view.checkbar import CheckBar
 
 
 class MainWindow:
 
     def __init__(self):
-        self.main_window = Tk()
+        self.vars = []
+        self.main_window = None
         self.user_register_window = None
         self.address_window = None
         self.add_food_window = None
         self.addresses_list = []
+        self.food_menu_window = None
+        self.foods_check_bar = None
+        self.buy_menu = None
 
     def run(self):
+        self.main_window = Tk()
         self.main_window.title("Welcome to Sitado app")
         # user register
         consumer_register_button = Button(self.main_window, text="Costumer Register", command=self.user_register)
         add_food_to_menu = Button(self.main_window, text="Add Food To Menu", command=self.add_food_to_menu)
+        buy_menu = Button(self.main_window, text="Buy Menu", command=self.buy)
         consumer_register_button.grid(column=1, row=0)
         add_food_to_menu.grid(column=1, row=2)
+        buy_menu.grid(column=1, row=4)
         self.main_window.mainloop()
 
     def user_register(self):
@@ -102,3 +111,50 @@ class MainWindow:
         add_new_food(name=name.get(), price=price.get())
         messagebox.showinfo('Success!', 'Food Added.')
         self.add_food_window.destroy()
+
+    def all_states(self, all_foods_list, costumer_id):
+        print(list(self.foods_check_bar.state()))
+        selected_foods = []
+        for i, food in enumerate(list(self.foods_check_bar.state())):
+            if food == 1:
+                selected_foods.append(all_foods_list[i])
+        create_bill(selected_foods=selected_foods, costumer_id=int(costumer_id.get()))
+
+
+    def show_menu(self):
+        self.food_menu_window = Tk()
+        self.food_menu_window.title("Menu")
+        costumer_id = Entry(self.food_menu_window, width=10)
+        costumer_id.insert(0, "enter your id")
+        costumer_id.pack(side=LEFT, anchor=W, expand=YES)
+        all_foods_list = get_all_foods()
+        self.foods_check_bar = CheckBar(self.food_menu_window, [food.name for food in all_foods_list], side=RIGHT)
+        Button(self.food_menu_window, text='Quit', command=self.food_menu_window.quit).pack(side=BOTTOM)
+        Button(self.food_menu_window, text='Peek',
+               command=partial(self.all_states, all_foods_list, costumer_id)).pack(side=BOTTOM)
+        self.food_menu_window.mainloop()
+
+
+    def buy(self):
+        self.buy_menu = Tk()
+        self.buy_menu.title("Buy")
+        store_id = Entry(self.buy_menu, width=10)
+        store_id.insert(0, "enter store id")
+        store_id.pack(side=LEFT, anchor=W, expand=YES)
+        name = Entry(self.buy_menu, width=10)
+        name.insert(0, "enter name")
+        name.pack(side=LEFT, anchor=W, expand=YES)
+        price = Entry(self.buy_menu, width=10)
+        price.insert(0, "enter price")
+        price.pack(side=LEFT, anchor=W, expand=YES)
+        Button(self.buy_menu, text='Quit', command=self.buy_menu.quit).pack(side=BOTTOM)
+        Button(self.buy_menu, text='Peek',
+               command=partial(self.buy_bill, store_id, name, price)).pack(side=BOTTOM)
+        # self.buy_menu.mainloop()
+
+
+    def buy_bill(self, store_id, name, price):
+        store_id = int(store_id.get())
+        name = name.get()
+        price = price.get()
+        create_buy_bill(name=name, price=price, store_id=store_id)
