@@ -1,7 +1,10 @@
-from sqlalchemy import Integer, Column, String, ForeignKey
-from sqlalchemy.orm import relationship
+from datetime import datetime
 
-from db.connect import Base
+from sqlalchemy import Integer, Column, String, ForeignKey
+from sqlalchemy.orm import relationship, validates
+
+from db.connect import Base, session
+from db.models.logs import Log
 
 
 class Costumer(Base):
@@ -17,4 +20,12 @@ class Costumer(Base):
         self.first_name = first_name
         self.last_name = last_name
         self.age = age
+
+    @validates('age')
+    def update_state(self, key, value):
+        log = Log(costumer="Create New Costumer, {}".format(datetime.now()))
+        session.add(log)
+        session.commit()
+        return value
+
 
