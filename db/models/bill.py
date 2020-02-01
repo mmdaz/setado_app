@@ -11,5 +11,5 @@ class Bill(Base):
     food_price = Column(String)
     created_at = Column(DateTime)
     address = relationship("Address", uselist=False)
-    costumer_id = Column(Integer, ForeignKey('costumer.id'))
+    costumer_id = Column(Integer, ForeignKey('costumer.id'), )
     store_id = Column(Integer, ForeignKey('store.id'))

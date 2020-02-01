@@ -2,11 +2,13 @@ from datetime import datetime
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from db.connect import session
+from db.connect import session, engine
 from db.models.address import Address
 from db.models.bill import Bill
 from db.models.costumer import Costumer
+from db.models.courier import Courier
 from db.models.food import Food
+from db.models.store import Store
 
 
 def add_costumer(first_name, last_name, age):
@@ -74,3 +76,27 @@ def get_all_bills():
     except SQLAlchemyError as e:
         session.rollback()
         print("we have error in get_all_bills, {}".format(e))
+
+def delete_table_from_db(table_name):
+    try:
+        if table_name == "costumer":
+            Address.__table__.drop(engine)
+            Bill.__table__.drop(engine)
+            Costumer.__table__.drop(engine)
+        elif table_name == "store":
+            Address.__table__.drop(engine)
+            Bill.__table__.drop(engine)
+            Store.__table__.drop(engine)
+        elif table_name == "courier":
+            Courier.__table__.drop(engine)
+        elif table_name == "food":
+            Food.__table__.drop(engine)
+
+        return True
+    except Exception as e:
+        session.rollback()
+        print("we have error in get_all_bills, {}".format(e))
+        return False
+
+
+
