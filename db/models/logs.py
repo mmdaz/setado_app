@@ -12,4 +12,3 @@ class Log(Base):
     courier = Column(String)
     food = Column(String)
     store = Column(String)
-

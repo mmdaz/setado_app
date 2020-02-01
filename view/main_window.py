@@ -38,7 +38,7 @@ class MainWindow:
         consumer_register_button.grid(column=1, row=0)
         add_food_to_menu.grid(column=1, row=2)
         buy_menu.grid(column=1, row=4)
-        report.grid(column=1, row=5)
+        report.grid(column=1, row=7)
         delete_a_table.grid(column=1, row=5)
         delete_a_costumer.grid(column=1, row=6)
         self.main_window.mainloop()
