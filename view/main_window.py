@@ -5,7 +5,8 @@ from tkinter import messagebox
 from controller.food import add_new_food
 from controller.register import costumer_register, add_address_to_costumer, calculate_report
 from db.models.address import Address
-from db.persist.persist import get_all_foods, create_bill, create_buy_bill, delete_table_from_db
+from db.persist.persist import get_all_foods, create_bill, create_buy_bill, delete_table_from_db, \
+    delete_food_from_db
 from view.checkbar import CheckBar
 
 
@@ -22,6 +23,7 @@ class MainWindow:
         self.foods_check_bar = None
         self.buy_menu = None
         self.delete_table_menu = None
+        self.delete_food_menu = None
 
     def run(self):
         self.main_window = Tk()
@@ -32,11 +34,13 @@ class MainWindow:
         buy_menu = Button(self.main_window, text="Buy Menu", command=self.buy)
         report = Button(self.main_window, text="Report", command=self.show_report)
         delete_a_table = Button(self.main_window, text="Delete", command=self.show_delete_table_menu)
+        delete_a_costumer = Button(self.main_window, text="Delete Food", command=self.show_delete_food_menu)
         consumer_register_button.grid(column=1, row=0)
         add_food_to_menu.grid(column=1, row=2)
         buy_menu.grid(column=1, row=4)
         report.grid(column=1, row=5)
         delete_a_table.grid(column=1, row=5)
+        delete_a_costumer.grid(column=1, row=6)
         self.main_window.mainloop()
 
     def user_register(self):
@@ -186,3 +190,19 @@ class MainWindow:
         else:
             messagebox.showerror(title="Error", message="We have error!")
 
+    def show_delete_food_menu(self):
+        self.delete_food_menu = Tk()
+        self.delete_food_menu.title("delete food name.")
+        food_name = Entry(self.delete_food_menu, width=30)
+        food_name.insert(0, "enter food name")
+        food_name.pack(side=LEFT, anchor=W, expand=YES)
+        Button(self.delete_food_menu, text='Quit', command=self.delete_food_menu.quit).pack(side=BOTTOM)
+        Button(self.delete_food_menu, text='Peek',
+               command=partial(self.delete_food, food_name)).pack(side=BOTTOM)
+
+    def delete_food(self, costumer_id):
+        ok = delete_food_from_db(food_name=costumer_id.get())
+        if ok:
+            messagebox.showinfo(title="Success", message="food deleted")
+        else:
+            messagebox.showerror(title="Error", message="We have error!")

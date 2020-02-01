@@ -95,8 +95,15 @@ def delete_table_from_db(table_name):
         return True
     except Exception as e:
         session.rollback()
-        print("we have error in get_all_bills, {}".format(e))
+        print("we have error in delete_table_from_db, {}".format(e))
         return False
 
-
-
+def delete_food_from_db(food_name):
+    try:
+        session.query(Food).filter(Food.name == food_name).delete()
+        session.commit()
+        return True
+    except Exception as e:
+        session.rollback()
+        print("we have error in delete_food, {}".format(e))
+        return False
